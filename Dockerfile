@@ -68,5 +68,5 @@ ADD pip-requirements.txt /home/dev/pip-requirements.txt
 RUN pip install -r /home/dev/pip-requirements.txt
 
 # Add master and worker start scripts
-ADD start-master.sh start-worker.sh ${HOME}
-RUN chmod a+rx ${HOME}/start-master.sh ${HOME}/start-worker.sh
+COPY start-master.sh start-worker.sh /
+RUN chmod a+rx /start-master.sh /start-worker.sh
