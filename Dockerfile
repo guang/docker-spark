@@ -1,5 +1,16 @@
 FROM debian:jessie
 MAINTAINER Guang Yang <garry.yangguang@gmail.com>
+ENV REFRESHED_AT 2016-02-14 15:46
+
+ENV JAVA_HOME /usr/jdk1.8.0_31
+ENV PATH $PATH:$JAVA_HOME/bin
+ENV SPARK_VERSION 1.4.1
+ENV HADOOP_VERSION 2.4
+ENV SPARK_PACKAGE $SPARK_VERSION-bin-hadoop$HADOOP_VERSION
+ENV SPARK_HOME /usr/spark-$SPARK_PACKAGE
+ENV PATH $PATH:$SPARK_HOME/bin
+WORKDIR /home/dev
+ENV HOME /home/dev
 
 RUN apt-get update -y && apt-get install -y \
     curl \
@@ -17,6 +28,7 @@ RUN apt-get update -y && apt-get install -y \
     libffi-dev \
     libssl-dev \
     libmysqlclient-dev \
+    libkrb5-dev \
     python-dev \
     python-psycopg2 \
     python-matplotlib \
@@ -27,14 +39,9 @@ RUN apt-get update -y && apt-get install -y \
 
 # Get most up to date pip cos im so hipster
 RUN curl -s https://bootstrap.pypa.io/get-pip.py > get-pip.py \
- && python get-pip.py
-
-WORKDIR /home/dev
-ENV HOME /home/dev
+ && python get-pip.py pip==7.1.2
 
 # Java
-ENV JAVA_HOME /usr/jdk1.8.0_31
-ENV PATH $PATH:$JAVA_HOME/bin
 RUN curl -sL --retry 3 --insecure \
   --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
   "http://download.oracle.com/otn-pub/java/jdk/8u31-b13/server-jre-8u31-linux-x64.tar.gz" \
@@ -44,11 +51,6 @@ RUN curl -sL --retry 3 --insecure \
   && rm -rf $JAVA_HOME/man
 
 # Spark
-ENV SPARK_VERSION 1.4.1
-ENV HADOOP_VERSION 2.4
-ENV SPARK_PACKAGE $SPARK_VERSION-bin-hadoop$HADOOP_VERSION
-ENV SPARK_HOME /usr/spark-$SPARK_PACKAGE
-ENV PATH $PATH:$SPARK_HOME/bin
 RUN curl -sL --retry 3 \
   "http://mirrors.ibiblio.org/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_PACKAGE.tgz" \
   | gunzip \
@@ -62,5 +64,9 @@ RUN curl -sL --retry 3 "http://central.maven.org/maven2/org/apache/hadoop/hadoop
  && curl -sL --retry 3 "http://central.maven.org/maven2/joda-time/joda-time/2.8.2/joda-time-2.8.2.jar" -o $SPARK_HOME/lib/joda-time-2.8.2.jar
 
 # Python Dependencies
-ADD plushy_requirements.txt /home/dev/plushy_requirements.txt
-RUN pip install -r /home/dev/plushy_requirements.txt
+ADD requirements.txt /home/dev/requirements.txt
+RUN pip install -r /home/dev/requirements.txt
+
+# Add master and worker start scripts
+ADD start-master.sh start-worker.sh ${HOME}
+RUN chmod a+rx ${HOME}/start-master.sh ${HOME}/start-worker.sh
