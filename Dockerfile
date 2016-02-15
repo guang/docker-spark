@@ -64,8 +64,8 @@ RUN curl -sL --retry 3 "http://central.maven.org/maven2/org/apache/hadoop/hadoop
  && curl -sL --retry 3 "http://central.maven.org/maven2/joda-time/joda-time/2.8.2/joda-time-2.8.2.jar" -o $SPARK_HOME/lib/joda-time-2.8.2.jar
 
 # Python Dependencies
-ADD requirements.txt /home/dev/requirements.txt
-RUN pip install -r /home/dev/requirements.txt
+ADD pip-requirements.txt /home/dev/pip-requirements.txt
+RUN pip install -r /home/dev/pip-requirements.txt
 
 # Add master and worker start scripts
 ADD start-master.sh start-worker.sh ${HOME}
