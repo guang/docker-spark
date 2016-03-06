@@ -2,7 +2,7 @@
 This is my docker setup for deploying spark (tailored towards pyspark) on kubernetes, based on other peeps' [existing](https://github.com/mattf/openshift-spark) [work](https://github.com/gettyimages/docker-spark)
 
 Notice that things like port mappings are delegated to the orchestration tool.
-As a result, the template for master pod should look soemthing like
+As a result, the template for master pod should look something like
 ```
 {
   "kind": "Pod",
