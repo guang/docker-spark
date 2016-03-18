@@ -4,8 +4,8 @@ ENV REFRESHED_AT 2016-02-14 15:46
 
 ENV JAVA_HOME /usr/jdk1.8.0_31
 ENV PATH $PATH:$JAVA_HOME/bin
-ENV SPARK_VERSION 1.4.1
-ENV HADOOP_VERSION 2.4
+ENV SPARK_VERSION 1.6.1
+ENV HADOOP_VERSION 2.7.2
 ENV SPARK_PACKAGE $SPARK_VERSION-bin-hadoop$HADOOP_VERSION
 ENV SPARK_HOME /usr/spark-$SPARK_PACKAGE
 ENV PATH $PATH:$SPARK_HOME/bin
@@ -51,10 +51,16 @@ RUN curl -sL --retry 3 --insecure \
   && rm -rf $JAVA_HOME/man
 
 # Spark
-RUN curl -sL --retry 3 \
-  "http://mirrors.ibiblio.org/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_PACKAGE.tgz" \
-  | gunzip \
-  | tar x -C /usr/ \
+# RUN curl -sL --retry 3 \
+#   "http://mirrors.ibiblio.org/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_PACKAGE.tgz" \
+#   | gunzip \
+#   | tar x -C /usr/ \
+#   && ln -s $SPARK_HOME /usr/spark
+RUN git clone https://github.com/apache/spark.git /usr/spark \
+  && cd /usr/spark \
+  && git checkout tags/v1.6.1 \
+  && ./dev/change-scala-version.sh 2.11 \
+  && ./make-distribution.sh --name custom-spark --tgz -Phadoop-2.6 -Dscala-2.11 -Dhadoop.version=2.7.2  -DskipTests \
   && ln -s $SPARK_HOME /usr/spark
 
 # Hadoop/S3 Dependencies
