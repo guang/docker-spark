@@ -7,7 +7,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 ENV SPARK_VERSION 1.6.1
 ENV HADOOP_VERSION 2.7.2
 ENV SPARK_PACKAGE $SPARK_VERSION-bin-hadoop$HADOOP_VERSION
-ENV SPARK_HOME /usr/spark-$SPARK_PACKAGE
+ENV SPARK_HOME /usr/spark-1.6.1-bin-custom-spark
 ENV PATH $PATH:$SPARK_HOME/bin
 WORKDIR /home/dev
 ENV HOME /home/dev
@@ -56,12 +56,20 @@ RUN curl -sL --retry 3 --insecure \
 #   | gunzip \
 #   | tar x -C /usr/ \
 #   && ln -s $SPARK_HOME /usr/spark
-RUN git clone https://github.com/apache/spark.git /usr/spark \
-  && cd /usr/spark \
-  && git checkout tags/v1.6.1 \
-  && ./dev/change-scala-version.sh 2.11 \
-  && ./make-distribution.sh --name custom-spark --tgz -Phadoop-2.6 -Dscala-2.11 -Dhadoop.version=2.7.2  -DskipTests \
+
+# Spark
+RUN curl -sL --retry 3 \
+  "http://kh-public.s3.amazonaws.com/spark-1.6.1-bin-custom-spark.tgz" \
+  | gunzip \
+  | tar x -C /usr/ \
   && ln -s $SPARK_HOME /usr/spark
+
+# RUN git clone https://github.com/apache/spark.git /usr/spark \
+#   && cd /usr/spark \
+#   && git checkout tags/v1.6.1 \
+#   && ./dev/change-scala-version.sh 2.11 \
+#   && ./make-distribution.sh --name custom-spark --tgz -Phadoop-2.6 -Dscala-2.11 -Dhadoop.version=2.7.2  -DskipTests \
+#   && ln -s $SPARK_HOME /usr/spark
 
 # Hadoop/S3 Dependencies
 RUN curl -sL --retry 3 "http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.6.0/hadoop-aws-2.6.0.jar" -o $SPARK_HOME/lib/hadoop-aws-2.6.0.jar \
