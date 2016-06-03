@@ -41,3 +41,4 @@ pytest-pep8
 pytest-cov
 cobertura-clover-transform
 slackclient
+tabulate
