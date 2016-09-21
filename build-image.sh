@@ -1,3 +1,3 @@
-tag=1.0.0
+tag=1.1.0
 docker build -t guangyang/docker-spark:${tag} .
 docker push guangyang/docker-spark:${tag}
