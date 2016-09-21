@@ -1,4 +1,6 @@
+awscli
 boto
+boto3
 clint
 cobertura-clover-transform
 dropbox
