@@ -26,6 +26,7 @@ pytest-pep8
 python-dateutil
 python-slugify
 requests
+sas7bdat
 scikit-learn
 scipy
 seaborn
